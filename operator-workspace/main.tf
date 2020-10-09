@@ -20,12 +20,14 @@ data "terraform_remote_state" "admin" {
 data "vault_aws_access_credentials" "creds" {
   backend = data.terraform_remote_state.admin.outputs.backend
   role    = data.terraform_remote_state.admin.outputs.role
+  type    = "sts"
 }
 
 provider "aws" {
   region     = var.region
   access_key = data.vault_aws_access_credentials.creds.access_key
   secret_key = data.vault_aws_access_credentials.creds.secret_key
+  token      = data.vault_aws_access_credentials.creds.security_token
 }
 
 data "aws_ami" "ubuntu" {
